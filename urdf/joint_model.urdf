@@ -1,27 +1,79 @@
-<?xml version="1.0"?>
-<robot name="origins">
-  <link name="base_link">
-    <visual >
-      <geometry>
-        <box size="0.102 0.102 0.102"/>
-        <material name="black">
-      </geometry>
-    </visual>
-  </link>
+<xacro:include filename="$(find joint_description)/urdf/joint_model.macro.urdf"/>
 
+<?xml version="1.0"?>
+<robot name="joint_mechanism">
+
+  <material name="black">
+    <color rgba="0 0 0 1"/>
+  </material>
+  <material name="red">
+    <color rgba="1 0 0 1"/>
+  </material>
+  <material name="white">
+    <color rgba="1 1 1 1"/>
+  </material>
+
+  <!-- World reference frame -->
+  <link name="world"/>
+
+  <!-- Base link (no geometry) -->
+  <link name="base_link"/>
+
+  <!-- Stator link (black box) -->
   <link name="stator_link">
     <visual>
       <geometry>
-        <box size="0.6 0.1 0.2"/>
+        <box size="0.102 0.102 0.102"/>  <!-- 102mm cube -->
       </geometry>
-      <origin rpy="0 1.57075 0" xyz="0 0 -0.3"/>
+      <material name="black"/>
     </visual>
   </link>
 
-  <joint name="base_to_right_leg" type="fixed">
+  <!-- Rotor link (red cylinder) -->
+  <link name="rotor_link">
+    <visual>
+      <geometry>
+        <cylinder radius="0.025" length="0.01"/>  <!-- 50mm diameter, 10mm height -->
+      </geometry>
+      <material name="red"/>
+    </visual>
+  </link>
+
+  <!-- Angle indicator link -->
+  <link name="angle_link">
+    <visual>
+      <geometry>
+        <box size="0.025 0.002 0.002"/>  <!-- 25x2x2mm -->
+      </geometry>
+      <material name="white"/>
+    </visual>
+  </link>
+
+  <!-- Joints -->
+  <joint name="base_to_world" type="fixed">
+    <parent link="world"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <joint name="stator_to_base" type="fixed">
     <parent link="base_link"/>
-    <child link="right_leg"/>
-    <origin xyz="0 -0.22 0.25"/>
+    <child link="stator_link"/>
+    <origin xyz="0 0 0.051"/>  <!-- 51mm above base -->
+  </joint>
+
+  <joint name="stator_to_rotor" type="fixed">
+    <parent link="stator_link"/>
+    <child link="rotor_link"/>
+    <origin xyz="0 0 0.056"/>  <!-- On top of stator -->
+    <axis xyz="0 0 1"/>  <!-- Rotation around Z-axis -->
+    <limit lower="-3.14" upper="3.14" effort="0" velocity="0"/>
+  </joint>
+
+  <joint name="rotor_to_angle" type="fixed">
+    <parent link="rotor_link"/>
+    <child link="angle_link"/>
+    <origin xyz="0.0125 0 0.005" rpy="0 0 0"/>  <!-- Extends from center to edge -->
   </joint>
 
 </robot>

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<robot name="joint_mechanism" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Materials -->
+  <material name="black">
+    <color rgba="0 0 0 1"/>
+  </material>
+  <material name="red">
+    <color rgba="1 0 0 1"/>
+  </material>
+  <material name="white">
+    <color rgba="1 1 1 1"/>
+  </material>
+
+  <!-- World frame -->
+  <link name="world"/>
+
+  <!-- Include macro -->
+  <xacro:include filename="$(find joint_description)/urdf/joint_model.macro.urdf.xacro" />
+
+  <!-- Instantiate macro -->
+  <xacro:joint_model prefix="" />
+
+  <!-- Connect world to base -->
+  <joint name="base_joint" type="fixed">
+    <parent link="world"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+</robot>
